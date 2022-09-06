@@ -16,7 +16,6 @@ async def open_tasks(message: types.Message):
                 noncom_task[k] = -1
             else:
                 noncom_task[k] = list(v[0])[0]
-        print(noncom_task)
         sorted_task = dict(sorted(noncom_task.items(), key=lambda x: x[1]))
         for value in sorted_task:
             amount += 1
