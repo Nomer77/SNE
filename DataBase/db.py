@@ -71,3 +71,13 @@ class TeleData:
         async with aiosqlite.connect(self.base) as connect:
             await connect.execute("UPDATE tasks SET is_recalled = 1 WHERE task = ? AND owner = ?", (task, tele_id))
             await connect.commit()
+
+    async def update_task(self, tele_id, task, edited, time=None):
+        async with aiosqlite.connect(self.base) as connect:
+            await connect.execute("UPDATE tasks SET time = ? WHERE task = ? AND owner = ?",
+                                  (time, task, tele_id))
+            await connect.commit()
+        async with aiosqlite.connect(self.base) as connect:
+            await connect.execute("UPDATE tasks SET task = ? WHERE task = ? AND owner = ?",
+                                  (edited, task, tele_id))
+            await connect.commit()

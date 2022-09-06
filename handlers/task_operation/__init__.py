@@ -3,3 +3,4 @@ from handlers.task_operation import complete_task_opera
 from handlers.task_operation import del_task_opera
 from handlers.task_operation import open_task_opera
 from handlers.task_operation import open_edit_menu
+from handlers.task_operation import edit_task_opera
