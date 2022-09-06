@@ -3,10 +3,10 @@ from config_bot import dp
 import asyncio
 from process import send_task_notification
 
-from handlers import commands, other, tasks
+from handlers import commands, other, collector_task_handler
 
 commands.register_handlers_commands(dp)
-tasks.register_handlers_tasks(dp)
+collector_task_handler.register_handlers_tasks(dp)
 other.register_handlers_other(dp)
 
 if __name__ == '__main__':

@@ -1,2 +1,5 @@
 test.py
 .idea/
+DataBase/__pycache__/
+__pycache__/
+handlers/__pycache__/
