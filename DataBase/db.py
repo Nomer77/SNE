@@ -8,12 +8,12 @@ class TeleData:
 
     async def add_user(self, tele_id):
         async with aiosqlite.connect(self.base) as connect:
-            await connect.execute("INSERT INTO users ('tele_id') VALUES (?)", (tele_id, ))
+            await connect.execute("INSERT INTO users ('tele_id') VALUES (?)", (tele_id,))
             await connect.commit()
 
     async def is_user_exists(self, tele_id):
         async with aiosqlite.connect(self.base) as connect:
-            async with connect.execute("SELECT id FROM users WHERE tele_id = ?", (tele_id, )) as cursor:
+            async with connect.execute("SELECT id FROM users WHERE tele_id = ?", (tele_id,)) as cursor:
                 result = await cursor.fetchall()
                 await cursor.close()
                 return bool(len(result))
@@ -34,8 +34,15 @@ class TeleData:
     async def get_tasks(self, tele_id='%', is_complete='%', time='%', is_recalled='%'):
         async with aiosqlite.connect(self.base) as connect:
             request = "SELECT task FROM tasks WHERE owner LIKE (?) AND is_complete LIKE (?) AND (time LIKE (?) OR " \
-                      "time is NULL) AND is_complete LIKE (?)"
+                      "time is NULL) AND is_recalled LIKE (?)"
             async with connect.execute(request, (tele_id, is_complete, time, is_recalled)) as cursor:
+                result = await cursor.fetchall()
+                await cursor.close()
+                return result
+
+    async def get_task_of_id(self, tele_id, id):
+        async with aiosqlite.connect(self.base) as connect:
+            async with connect.execute("SELECT task FROM tasks WHERE id = ? AND owner = ?", (id, tele_id)) as cursor:
                 result = await cursor.fetchall()
                 await cursor.close()
                 return result
@@ -55,7 +62,8 @@ class TeleData:
 
     async def get_task_time(self, tele_id, task):
         async with aiosqlite.connect(self.base) as connect:
-            async with connect.execute("SELECT time FROM tasks WHERE task = ? AND owner = ?", (task, tele_id)) as cursor:
+            async with connect.execute("SELECT time FROM tasks WHERE task = ? AND owner = ?",
+                                       (task, tele_id)) as cursor:
                 result = await cursor.fetchall()
                 await cursor.close()
                 return result
@@ -81,3 +89,10 @@ class TeleData:
             await connect.execute("UPDATE tasks SET task = ? WHERE task = ? AND owner = ?",
                                   (edited, task, tele_id))
             await connect.commit()
+
+    async def get_task_id(self, tele_id, task):
+        async with aiosqlite.connect(self.base) as connect:
+            async with connect.execute("SELECT id FROM tasks WHERE task = ? AND owner = ?", (task, tele_id)) as cursor:
+                result = await cursor.fetchone()
+                await cursor.close()
+                return result
