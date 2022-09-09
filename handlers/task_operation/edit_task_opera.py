@@ -43,7 +43,7 @@ async def submit_edit_task(message: types.Message, state: FSMContext):
         task = base['query']
     task_id = await data.get_task_id(message.from_user.id, task)
     await data.update_task(message.from_user.id, task, message.text, time=time_manager.find_time(message.text))
-    edited = await data.get_task_of_id(message.from_user.id, task_id[0])
+    edited = await data.get_tasks(tele_id=message.from_user.id, task_id=task_id[0])
     if edited[0][0] == message.text:
         await bot.send_message(message.from_user.id, "Готово", reply_markup=markup.edit_task_button())
         await open_tasks(message)

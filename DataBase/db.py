@@ -31,18 +31,11 @@ class TeleData:
 
     # async def get_task_id(self, tele_id, task_name):
 
-    async def get_tasks(self, tele_id='%', is_complete='%', time='%', is_recalled='%'):
+    async def get_tasks(self, tele_id='%', is_complete='%', time='%', is_recalled='%', task_id='%'):
         async with aiosqlite.connect(self.base) as connect:
             request = "SELECT task FROM tasks WHERE owner LIKE (?) AND is_complete LIKE (?) AND (time LIKE (?) OR " \
-                      "time is NULL) AND is_recalled LIKE (?)"
-            async with connect.execute(request, (tele_id, is_complete, time, is_recalled)) as cursor:
-                result = await cursor.fetchall()
-                await cursor.close()
-                return result
-
-    async def get_task_of_id(self, tele_id, id):
-        async with aiosqlite.connect(self.base) as connect:
-            async with connect.execute("SELECT task FROM tasks WHERE id = ? AND owner = ?", (id, tele_id)) as cursor:
+                      "time is NULL) AND is_recalled LIKE (?) AND id LIKE (?)"
+            async with connect.execute(request, (tele_id, is_complete, time, is_recalled, task_id)) as cursor:
                 result = await cursor.fetchall()
                 await cursor.close()
                 return result
