@@ -5,6 +5,7 @@ from config_bot import bot, data
 import markup
 import time_manager
 from handlers.task_operation.open_task_opera import open_tasks
+from loguru import logger
 
 
 class FSM_add_task(StatesGroup):
@@ -40,6 +41,7 @@ async def submit_task(message: types.Message, state: FSMContext):
             for i in range(1, base['amount'] + 1):
                 await data.add_task(message.from_user.id, base['task' + str(i)],
                                     time=time_manager.find_time(base['task' + str(i)]))
+            logger.info(f"User ({message.from_user.id}) {message.from_user.username} add new task")
         except KeyError:
             pass
     await state.finish()

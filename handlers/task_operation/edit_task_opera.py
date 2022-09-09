@@ -5,7 +5,7 @@ from aiogram import types
 from config_bot import bot, data
 import markup
 import time_manager
-
+from loguru import logger
 
 
 class FSM_edit_task(StatesGroup):
@@ -47,6 +47,7 @@ async def submit_edit_task(message: types.Message, state: FSMContext):
     if edited[0][0] == message.text:
         await bot.send_message(message.from_user.id, "Готово", reply_markup=markup.edit_task_button())
         await open_tasks(message)
+        logger.info(f"User ({message.from_user.id}) {message.from_user.username} edited task")
     await state.finish()
 
 

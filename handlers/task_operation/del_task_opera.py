@@ -3,6 +3,7 @@ from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from config_bot import bot, data
 import markup
+from loguru import logger
 
 
 class FSM_delete_task(StatesGroup):
@@ -26,6 +27,7 @@ async def submit_delete(callback_query: types.CallbackQuery, state: FSMContext):
         if not bool(sum([int(callback_query.data in el) for el in await data.get_tasks(callback_query.from_user.id)])):
             await callback_query.answer("Задача успешно удалена!")
             await bot.send_message(callback_query.from_user.id, "Успешно!")
+            logger.info(f"User ({callback_query.from_user.id}) {callback_query.from_user.username} deleted '{callback_query.data}'")
     await callback_query.message.delete()
     await state.finish()
 

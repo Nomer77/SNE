@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import Dispatcher, FSMContext
 from config_bot import bot, data
 import markup
+from loguru import logger
 
 
 class FSM_complete_task(StatesGroup):
@@ -29,6 +30,7 @@ async def submit_complete(callback_query: types.CallbackQuery, state: FSMContext
                                                                                          is_complete=1)])):
             await callback_query.answer("Задача успешно отмечена выполненной")
             await bot.send_message(callback_query.from_user.id, "Успешно!")
+            logger.info(f"User ({callback_query.from_user.id}) {callback_query.from_user.username} completed '{callback_query.data}'")
     await callback_query.message.delete()
     await state.finish()
 
