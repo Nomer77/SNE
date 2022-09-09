@@ -24,7 +24,7 @@ async def open_tasks(message: types.Message):
             amount += 1
             await bot.send_message(message.from_user.id, f"<s>{amount}. <i>{value[0]}</i></s>", parse_mode='html')
     else:
-        await bot.send_message(message.from_user.id, "У вас нету задач :(", reply_markup=markup.task_button())
+        await bot.send_message(message.from_user.id, "У вас нет задач :(", reply_markup=markup.task_button())
 
 
 def register_handlers_open_task(dp: Dispatcher):

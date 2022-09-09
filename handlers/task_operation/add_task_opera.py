@@ -15,7 +15,9 @@ class FSM_add_task(StatesGroup):
 
 # @dp.message_handlers(lambda message: message.text == 'Добавить задачи')
 async def add_task(message: types.Message):
-    await bot.send_message(message.from_user.id, "Something: ", reply_markup=markup.stop_adding_button())
+    await bot.send_message(message.from_user.id, "Вводите задачи, каждая новая задача новым сообщением, в конце "
+                                                 "сообщения введите время в формате HH:MM, если хотите добавить "
+                                                 "время", reply_markup=markup.stop_adding_button())
     await FSM_add_task.adding.set()
 
 
