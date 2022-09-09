@@ -36,6 +36,13 @@ def stop_adding_button():
     return markup
 
 
+def cancel_button():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    stop = types.KeyboardButton("Отменить")
+    markup.add(stop)
+    return markup
+
+
 def choose_task(tasks):
     markup = types.InlineKeyboardMarkup(row_width=1)
     for value in tasks:

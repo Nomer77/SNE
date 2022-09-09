@@ -4,12 +4,14 @@ import asyncio
 from process import checking_time
 from loguru import logger
 
-from handlers import commands, other, collector_task_handler
+from handlers import commands, other, collector_task_handler, feedback
 
 logger.add("logs/log_file.log", format="{time} | {level} | {message}", level="INFO", rotation='25 KB', compression="zip")
 
+
 commands.register_handlers_commands(dp)
 collector_task_handler.register_handlers_tasks(dp)
+feedback.register_handlers_feedback(dp)
 other.register_handlers_other(dp)
 
 if __name__ == '__main__':
