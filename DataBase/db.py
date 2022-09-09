@@ -24,9 +24,9 @@ class TeleData:
                                   (task, time, tele_id))
             await connect.commit()
 
-    async def delete_task(self, tele_id, task):
+    async def delete_task(self, tele_id='%', task='%'):
         async with aiosqlite.connect(self.base) as connect:
-            await connect.execute("DELETE FROM tasks WHERE owner = ? AND task = ?", (tele_id, task))
+            await connect.execute("DELETE FROM tasks WHERE owner LIKE (?) AND task LIKE (?)", (tele_id, task))
             await connect.commit()
 
     # async def get_task_id(self, tele_id, task_name):
@@ -87,5 +87,12 @@ class TeleData:
         async with aiosqlite.connect(self.base) as connect:
             async with connect.execute("SELECT id FROM tasks WHERE task = ? AND owner = ?", (task, tele_id)) as cursor:
                 result = await cursor.fetchone()
+                await cursor.close()
+                return result
+
+    async def get_users(self):
+        async with aiosqlite.connect(self.base) as connect:
+            async with connect.execute("SELECT tele_id FROM users") as cursor:
+                result = await cursor.fetchall()
                 await cursor.close()
                 return result

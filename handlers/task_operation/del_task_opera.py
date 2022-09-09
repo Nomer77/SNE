@@ -22,7 +22,7 @@ async def delete_task(message: types.Message, state: FSMContext):
 # @dp.callback_query_handlers(state=FSM_delete_task.choose_delete)
 async def submit_delete(callback_query: types.CallbackQuery, state: FSMContext):
     if callback_query.data != '0':
-        await data.delete_task(callback_query.from_user.id, callback_query.data)
+        await data.delete_task(tele_id=callback_query.from_user.id, task=callback_query.data)
         if not bool(sum([int(callback_query.data in el) for el in await data.get_tasks(callback_query.from_user.id)])):
             await callback_query.answer("Задача успешно удалена!")
             await bot.send_message(callback_query.from_user.id, "Успешно!")
