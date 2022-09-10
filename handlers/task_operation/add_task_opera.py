@@ -38,12 +38,21 @@ async def processing_task(message: types.Message, state: FSMContext):
 
 
 async def submit_task(message: types.Message, state: FSMContext):
+    preven = []
     async with state.proxy() as base:
         try:
             for i in range(1, base['amount'] + 1):
-                await data.add_task(message.from_user.id, base['task' + str(i)],
-                                    time=time_manager.find_time(base['task' + str(i)]))
+                if await data.is_task_exists(message.from_user.id, base['task' + str(i)]):
+                    preven.append(base['task' + str(i)])
+                else:
+                    await data.add_task(message.from_user.id, base['task' + str(i)],
+                                        time=time_manager.find_time(base['task' + str(i)]))
             logger.info(f"User ({message.from_user.id}) {message.from_user.username} add new task")
+            if bool(len(preven)):
+                for el in preven:
+                    await bot.send_message(message.from_user.id, f"Задача '{el}' уже существует и не была добавлена "
+                                                                 f"повторно")
+                logger.info(f"User ({message.from_user.id}) {message.from_user.username} try add existing task")
         except KeyError:
             pass
     await state.finish()
