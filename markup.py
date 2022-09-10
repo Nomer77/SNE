@@ -1,4 +1,5 @@
 from aiogram import types
+from config_bot import data
 
 
 def menu_buttons():
@@ -43,10 +44,10 @@ def cancel_button():
     return markup
 
 
-def choose_task(tasks):
+async def choose_task(tasks, tele_id):
     markup = types.InlineKeyboardMarkup(row_width=1)
     for value in tasks:
-        button_task = types.InlineKeyboardButton(value[0], callback_data=value[0])
+        button_task = types.InlineKeyboardButton(value[0], callback_data=await data.get_task_id(tele_id, value[0]))
         markup.add(button_task)
     button_cancel = types.InlineKeyboardButton("Отменить", callback_data='0')
     markup.add(button_cancel)

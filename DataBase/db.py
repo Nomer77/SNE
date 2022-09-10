@@ -88,7 +88,7 @@ class TeleData:
             async with connect.execute("SELECT id FROM tasks WHERE task = ? AND owner = ?", (task, tele_id)) as cursor:
                 result = await cursor.fetchone()
                 await cursor.close()
-                return result
+                return result[0]
 
     async def get_users(self):
         async with aiosqlite.connect(self.base) as connect:

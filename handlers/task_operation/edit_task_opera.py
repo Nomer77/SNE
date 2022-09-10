@@ -17,7 +17,8 @@ class FSM_edit_task(StatesGroup):
 async def choose_edit_task(message: types.Message):
     if bool(await data.get_tasks(message.from_user.id, is_complete=0)):
         await bot.send_message(message.from_user.id, "Выберите задачу которую хотите отредактировать",
-                               reply_markup=markup.choose_task(await data.get_tasks(message.from_user.id, is_complete=0)))
+                               reply_markup=await markup.choose_task(
+                                await data.get_tasks(message.from_user.id, is_complete=0), message.from_user.id))
         await FSM_edit_task.choose_task.set()
     else:
         await bot.send_message(message.from_user.id, "У вас нет задач :(")
@@ -25,14 +26,14 @@ async def choose_edit_task(message: types.Message):
 
 # @dp.message_handler(state=FSM_edit_task.choose_task)
 async def edit_task(callback_query: types.CallbackQuery, state: FSMContext):
+    await callback_query.message.delete()
     if callback_query.data != '0':
-        await callback_query.message.delete()
+        task = await data.get_tasks(callback_query.from_user.id, task_id=callback_query.data)
         await bot.send_message(callback_query.from_user.id, "Введите измененную задачу: ")
         await FSM_edit_task.next()
         async with state.proxy() as base:
-            base['query'] = callback_query.data
+            base['query'] = task[0][0]
     else:
-        await callback_query.message.delete()
         await bot.send_message(callback_query.from_user.id, "Принято", reply_markup=markup.edit_task_button())
         await state.finish()
 
@@ -43,7 +44,7 @@ async def submit_edit_task(message: types.Message, state: FSMContext):
         task = base['query']
     task_id = await data.get_task_id(message.from_user.id, task)
     await data.update_task(message.from_user.id, task, message.text, time=time_manager.find_time(message.text))
-    edited = await data.get_tasks(tele_id=message.from_user.id, task_id=task_id[0])
+    edited = await data.get_tasks(tele_id=message.from_user.id, task_id=task_id)
     if edited[0][0] == message.text:
         await bot.send_message(message.from_user.id, "Готово", reply_markup=markup.edit_task_button())
         await open_tasks(message)
