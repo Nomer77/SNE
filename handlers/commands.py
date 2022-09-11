@@ -8,7 +8,10 @@ from handlers.task_operation.open_task_opera import open_tasks
 
 # @dp.message_handler(commands=['start'])
 async def command_start(message: types.Message):
-    await message.answer(f"{message.chat.username}, Добро пожаловать!", reply_markup=markup.menu_buttons())
+    if message.from_user.username == 'None':
+        await message.answer(f"{message.from_user.first_name}, Добро пожаловать!", reply_markup=markup.menu_buttons())
+    else:
+        await message.answer(f"{message.chat.username}, Добро пожаловать!", reply_markup=markup.menu_buttons())
     if not await data.is_user_exists(message.from_user.id):
         await data.add_user(message.from_user.id)
         logger.info(f"Bot created new user ({message.from_user.id})")
