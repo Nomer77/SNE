@@ -1,8 +1,8 @@
 from aiogram import types
-from loguru import logger
 from aiogram.dispatcher import Dispatcher, FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from config_bot import bot
+from handlers.function import set_message_id, delete_message
+from handlers.machine import FSMLieter, FSMFeedback
+from config import bot
 import markup
 
 
@@ -42,25 +42,22 @@ def send_email(sub, feed):
     mail.quit()
 
 
-class FSM_feedback(StatesGroup):
-    get_message = State()
+async def get_feedback(callback_query: types.CallbackQuery, state: FSMContext):
+    await FSMFeedback.annahme.set()
+    m2u = await bot.send_message(callback_query.from_user.id, "Введите свой отзыв о нашем боте. Будем рады любому мнению!", reply_markup=markup.button_cancel())
+    await delete_message(state, callback_query.from_user.id)
+    await set_message_id(state, m2u)
+    await FSMFeedback.submit.set()
 
-
-async def get_feedback(message: types.Message):
-    await bot.send_message(message.from_user.id, "Введите свой отзыв о нашем боте. Будем рады любому мнению!",
-                           reply_markup=markup.cancel_button())
-    await FSM_feedback.get_message.set()
 
 
 async def submit_feedback(message: types.Message, state: FSMContext):
-    if message.text != 'Отменить':
-        send_email(f"Feedback from User ({message.from_user.id}) {message.from_user.username}", message.text)
-        await bot.send_message(message.from_user.id, "Спасибо за ваш отзыв!")
-        logger.info(f"User ({message.from_user.id}) {message.from_user.username} send feedback!")
-    await bot.send_message(message.from_user.id, "Возвращаю вас в меню...", reply_markup=markup.menu_buttons())
-    await state.finish()
+    send_email(f"Feedback from User ({message.from_user.id}) {message.from_user.username}", message.text)
+    m2u = await bot.send_message(message.from_user.id, "Спасибо за ваш отзыв!", reply_markup=markup.button_return())
+    await delete_message(state, message.from_user.id)
+    await set_message_id(state, m2u)
 
 
 def register_handlers_feedback(dp: Dispatcher):
-    dp.register_message_handler(get_feedback, lambda message: message.text == "Обратная связь")
-    dp.register_message_handler(submit_feedback, state=FSM_feedback.get_message)
+    dp.register_callback_query_handler(get_feedback, lambda callback_query: callback_query.data == "2", state=FSMLieter.menu)
+    dp.register_message_handler(submit_feedback, state=FSMFeedback.submit)
