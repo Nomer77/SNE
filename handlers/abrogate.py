@@ -34,50 +34,5 @@ async def return_dashboard(callback_query: types.CallbackQuery, state: FSMContex
 
 
 def register_abrogate_handler(dp: Dispatcher):
-    #Menu
-
-    dp.register_callback_query_handler(cancel_action, lambda callback_query: callback_query.data == '-1', state=FSMLieter.menu)
-
-    #Dashboard
-
-    dp.register_callback_query_handler(return_menu, lambda callback_query: callback_query.data == '-1', state=FSMDashboard.menu)
-
-    #Nachtrag
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMNachtrag.description)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMNachtrag.annahme)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMNachtrag.submit)
-
-    #Complete
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMComplete.auswalh)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMComplete.submit)
-
-    #Delete
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMDelete.auswalh)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMDelete.submit)
-
-    #Edit
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMEdit.auswalh)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMEdit.annahme)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMEdit.falte)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMEdit.submit)
-
-    #Liste
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMListe.submit)
-
-    #Feedback
-
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMFeedback.annahme)
-    dp.register_callback_query_handler(return_dashboard, lambda callback_query: callback_query.data == '-1', state=FSMFeedback.submit)
-
-    #Board
-
-    dp.register_callback_query_handler(return_menu, lambda callback_query: callback_query.data == '-1', state=FSMBoard.menu)
-
-    dp.register_callback_query_handler(return_menu, lambda callback_query: callback_query.data == '-1', state=FSMValute.auswalh)
-    dp.register_callback_query_handler(return_menu, lambda callback_query: callback_query.data == '-1', state=FSMValute.submit)
+    dp.register_callback_query_handler(cancel_action, lambda callback_query: callback_query.data == '-1', state='*')
 

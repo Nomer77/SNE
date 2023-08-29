@@ -26,15 +26,14 @@ async def processing_task(message: types.Message, state: FSMContext):
     if message.text == "Стоп":
         await FSM_add_task.next()
         await submit_task(message, state)
-    else:
-        async with state.proxy() as base:
-            try:
-                base['amount'] += 1
-            except KeyError:
-                base['amount'] = 1
-            base['task' + str(base['amount'])] = message.text
-            await bot.send_message(message.from_user.id, f"Задача <b>{base['task' + str(base['amount'])]}</b> принята",
-                                   parse_mode='html')
+        return
+    async with state.proxy() as base:
+        if 'amount' not in base:
+            base['amount'] = 0
+        base['amount'] += 1
+        base[f"task{base['amount']}"] = message.text
+        await bot.send_message(message.from_user.id, f"Задача <b>{base[f"task{base['amount']}"]}</b> принята",
+                               parse_mode='html')
 
 
 async def submit_task(message: types.Message, state: FSMContext):
@@ -48,7 +47,7 @@ async def submit_task(message: types.Message, state: FSMContext):
                     await data.add_task(message.from_user.id, base['task' + str(i)],
                                         time=time_manager.find_time(base['task' + str(i)]))
             logger.info(f"User ({message.from_user.id}) {message.from_user.username} add new task")
-            if bool(len(preven)):
+            if preven:
                 for el in preven:
                     await bot.send_message(message.from_user.id, f"Задача '{el}' уже существует и не была добавлена "
                                                                  f"повторно")
